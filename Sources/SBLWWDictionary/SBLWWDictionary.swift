@@ -63,14 +63,13 @@ extension SBLWWDictionary {
         // Update
         addRegister[node.element] = max(additionTimestamp, node.timestamp)
     }
-
+    
     public mutating func remove(_ element: T) {
         remove(SBLWWNode(value: element))
     }
-
     
     public mutating func remove(_ node: SBLWWNode<T>) {
-            guard let existingNode = lookup(node.element) else {
+        guard let existingNode = lookup(node.element) else {
             removeRegister[node.element] = node.timestamp
             return
         }
@@ -78,3 +77,17 @@ extension SBLWWDictionary {
         removeRegister[node.element] = max(existingNode.timestamp, node.timestamp)
     }
 }
+
+// MARK: - Merging
+extension SBLWWDictionary {
+    
+    public mutating func merge(with otherSBLWWDictionary: SBLWWDictionary) {
+        otherSBLWWDictionary.addRegister.forEach { element, timestamp in
+            add(SBLWWNode<T>(value: element, timestamp: timestamp))
+        }
+        otherSBLWWDictionary.removeRegister.forEach { element, timestamp in
+            remove(SBLWWNode<T>(value: element, timestamp: timestamp))
+        }
+    }
+}
+
