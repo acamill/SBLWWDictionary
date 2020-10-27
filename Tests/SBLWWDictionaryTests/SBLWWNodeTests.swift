@@ -2,6 +2,7 @@ import XCTest
 @testable import SBLWWDictionary
 
 final class SBLWWElementTests: XCTestCase {
+    
     func testEquatable() {
         let element = SBLWWNode<String>(value: "Element", timestamp: 0)
         let identicalElement = SBLWWNode<String>(value: "Element", timestamp: 0)

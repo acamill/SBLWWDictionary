@@ -6,9 +6,18 @@ final class SBLWWDictionaryTests: XCTestCase {
     let nodeAOlder = SBLWWNode<String>(value: "a", timestamp: 0)
     let nodeA = SBLWWNode<String>(value: "a", timestamp: 1)
     let nodeANewer = SBLWWNode<String>(value: "a", timestamp: 2)
-    let nodeBOlder = SBLWWNode<String>(value: "b", timestamp: 0)
     let nodeB = SBLWWNode<String>(value: "b", timestamp: 1)
-    let nodeBNewer = SBLWWNode<String>(value: "b", timestamp: 2)
+    let nodeC = SBLWWNode<String>(value: "c", timestamp: 1)
+    let nodeD = SBLWWNode<String>(value: "d", timestamp: 1)
+    
+    func testEquatable() {
+        XCTAssertEqual(SBLWWDictionary<String>([nodeA, nodeB]), SBLWWDictionary<String>([nodeA, nodeB]))
+        XCTAssertNotEqual(SBLWWDictionary<String>([nodeA, nodeB]), SBLWWDictionary<String>([nodeA, nodeD]))
+    }
+    
+    func testCommutable() {
+        XCTAssertEqual(SBLWWDictionary<String>([nodeA, nodeB]), SBLWWDictionary<String>([nodeB, nodeA]))
+    }
     
     func testAddition() {
         // Given
@@ -104,10 +113,11 @@ final class SBLWWDictionaryTests: XCTestCase {
         
         // Then
         XCTAssertEqual(resultA, resultB)
-        XCTAssert(resultA === resultB)
     }
     
     static var allTests = [
+        ("testEquatable", testEquatable),
+        ("testCommutable", testCommutable),
         ("testAddition", testAddition),
         ("testRemoval", testRemoval),
         ("testAddIdempotence", testAddIdempotence),
@@ -115,5 +125,9 @@ final class SBLWWDictionaryTests: XCTestCase {
         ("testUpdate", testUpdate),
         ("testUpdateInvalid", testUpdateInvalid),
         ("testCommutativity", testCommutativity),
+        ("testMerge", testMerge),
+        ("testMergeIdempotence", testMergeIdempotence),
+        ("testMergeCommutativity", testMergeCommutativity),
+        ("testMergeAssociativity", testMergeAssociativity),
     ]
 }

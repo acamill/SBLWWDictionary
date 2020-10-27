@@ -8,7 +8,7 @@
 import Foundation
 
 /// Representation of an element held in a SBLWWDictionnary
-public struct SBLWWNode<T: Hashable>: Comparable {
+public struct SBLWWNode<T: Hashable>: Comparable, Hashable {
     public let element: T
     public let timestamp: TimeInterval
     

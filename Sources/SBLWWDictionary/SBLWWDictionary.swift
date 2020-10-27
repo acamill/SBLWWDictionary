@@ -19,20 +19,35 @@ public struct SBLWWDictionary<T: Hashable>: Equatable {
     
     public init(_ element: T) {
         self.init()
-        addRegister[element] = Date().timeIntervalSinceNow
+        add(element)
+    }
+    
+    public init(_ elements: [T]) {
+        self.init()
+        elements.forEach { element in
+            add(element)
+        }
     }
     
     public init(_ node: SBLWWNode<T>) {
         self.init()
-        addRegister[node.element] = node.timestamp
+        add(node)
+    }
+    
+    public init(_ nodes: [SBLWWNode<T>]) {
+        self.init()
+        nodes.forEach { node in
+            add(node)
+        }
     }
     
     public var resultingElements: [T] {
-        resultingDictionnary.map { node -> T in node.element }
+        resultingNodes.map { node -> T in node.element }
     }
     
-    public var resultingDictionnary: [SBLWWNode<T>] {
+    public var resultingNodes: Set<SBLWWNode<T>> {
         addRegister
+            // Merge logic - element from the addRegister, which are not contained in the removalRegister at posterior timestamps
             .filter { addedElement, additionTimestamp -> Bool in
                 guard let removalTimestamp = removeRegister.first(where: { removedElement, _ -> Bool in addedElement == removedElement })?.value else {
                     // Element is in resulting dict if it has never been part of the remove register
@@ -41,8 +56,10 @@ public struct SBLWWDictionary<T: Hashable>: Equatable {
                 // Element is in resulting dict if the addition is ulterior to removal (In the case where the element was added a second time)
                 return additionTimestamp > removalTimestamp
             }
-            .map { element, timestamp -> SBLWWNode<T> in
-                SBLWWNode<T>(value: element, timestamp: timestamp)
+            // Reduce into Set
+            .reduce(into: Set<SBLWWNode<T>>()) { result, registerEntry in
+                let (element, timestamp) = registerEntry
+                result.insert(SBLWWNode<T>(value: element, timestamp: timestamp))
             }
     }
 }
@@ -80,6 +97,13 @@ extension SBLWWDictionary {
 
 // MARK: - Merging
 extension SBLWWDictionary {
+    
+    // Pure func version
+    public func merged(with otherSBLWWDictionary: SBLWWDictionary) -> SBLWWDictionary {
+        var result = self
+        result.merge(with: otherSBLWWDictionary)
+        return result
+    }
     
     public mutating func merge(with otherSBLWWDictionary: SBLWWDictionary) {
         otherSBLWWDictionary.addRegister.forEach { element, timestamp in
