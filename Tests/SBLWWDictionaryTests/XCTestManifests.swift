@@ -4,6 +4,7 @@ import XCTest
 public func allTests() -> [XCTestCaseEntry] {
     return [
         testCase(SBLWWDictionaryTests.allTests),
+        testCase(SBLWWElementTests.allTests),
     ]
 }
 #endif
