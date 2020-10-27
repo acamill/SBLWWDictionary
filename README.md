@@ -7,3 +7,4 @@
 - timestamps are used as node unique identifiers, there could be collisions even if unlikely, should make that more robust
 
 - If needed add pure methods versions as for the merging (used in tests)
+- Enabled code coverage locally : should add more test and fix the uncovered cases (Like removals in merge, quite big!)
