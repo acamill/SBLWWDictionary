@@ -7,10 +7,10 @@
 
 import Foundation
 
-public struct SBLWWDictionary<T: Hashable> {
+public struct SBLWWDictionary<T: Hashable>: Equatable {
     
-    private var addRegister: [T: TimeInterval]
-    private var removeRegister: [T: TimeInterval]
+    private (set) var addRegister: [T: TimeInterval]
+    private (set) var removeRegister: [T: TimeInterval]
     
     public init() {
         addRegister = [:]
@@ -22,42 +22,13 @@ public struct SBLWWDictionary<T: Hashable> {
         addRegister[element] = Date().timeIntervalSinceNow
     }
     
-    // MARK: - Add/Update
-    
-    public mutating func add(_ element: T) {
-        add(SBLWWNode(value: element))
+    public init(_ node: SBLWWNode<T>) {
+        self.init()
+        addRegister[node.element] = node.timestamp
     }
-    
-    public mutating func add(_ node: SBLWWNode<T>) {
-        guard let additionTimestamp = addRegister[node.value] else {
-            //
-            addRegister[node.value] = node.timestamp
-            return
-        }
-        // Update
-        addRegister[node.value] = max(additionTimestamp, node.timestamp)
-    }
-    
-    // MARK: - Remove/Update
-    
-    public mutating func remove(_ element: T) {
-        remove(SBLWWNode(value: element))
-    }
-
-    
-    public mutating func remove(_ node: SBLWWNode<T>) {
-            guard let existingNode = lookup(node.value) else {
-            removeRegister[node.value] = node.timestamp
-            return
-        }
-        // Update
-        removeRegister[node.value] = max(existingNode.timestamp, node.timestamp)
-    }
-    
-    // MARK: - Features
     
     public var resultingElements: [T] {
-        resultingDictionnary.map { node -> T in node.value }
+        resultingDictionnary.map { node -> T in node.element }
     }
     
     public var resultingDictionnary: [SBLWWNode<T>] {
@@ -74,18 +45,36 @@ public struct SBLWWDictionary<T: Hashable> {
                 SBLWWNode<T>(value: element, timestamp: timestamp)
             }
     }
+}
+
+// MARK: - Add/Remove/Update
+extension SBLWWDictionary {
     
-    public func lookup(_ element: T) -> SBLWWNode<T>? {
-        guard let additionTimestamp = addRegister[element] else {
-            // Element not in add register, so not in dict
-            return nil
-        }
-        let node = SBLWWNode<T>(value: element, timestamp: additionTimestamp)
-        guard let removalTimstamp = removeRegister[element] else {
-            // Element not in remove register, so in dict
-            return node
-        }
-        return additionTimestamp > removalTimstamp ? node : nil
+    public mutating func add(_ element: T) {
+        add(SBLWWNode(value: element))
     }
     
+    public mutating func add(_ node: SBLWWNode<T>) {
+        guard let additionTimestamp = addRegister[node.element] else {
+            //
+            addRegister[node.element] = node.timestamp
+            return
+        }
+        // Update
+        addRegister[node.element] = max(additionTimestamp, node.timestamp)
+    }
+
+    public mutating func remove(_ element: T) {
+        remove(SBLWWNode(value: element))
+    }
+
+    
+    public mutating func remove(_ node: SBLWWNode<T>) {
+            guard let existingNode = lookup(node.element) else {
+            removeRegister[node.element] = node.timestamp
+            return
+        }
+        // Update
+        removeRegister[node.element] = max(existingNode.timestamp, node.timestamp)
+    }
 }
