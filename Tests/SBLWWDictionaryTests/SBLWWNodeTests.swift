@@ -3,9 +3,9 @@ import XCTest
 
 final class SBLWWElementTests: XCTestCase {
     func testEquatable() {
-        let element = SBLWWElement<String>(value: "Element", timestamp: 0)
-        let identicalElement = SBLWWElement<String>(value: "Element", timestamp: 0)
-        let differentElement = SBLWWElement<String>(value: "Another Element", timestamp: 0)
+        let element = SBLWWNode<String>(value: "Element", timestamp: 0)
+        let identicalElement = SBLWWNode<String>(value: "Element", timestamp: 0)
+        let differentElement = SBLWWNode<String>(value: "Another Element", timestamp: 0)
         
         XCTAssertEqual(element, element)
         XCTAssertEqual(element, identicalElement)
@@ -13,9 +13,9 @@ final class SBLWWElementTests: XCTestCase {
     }
     
     func testStrictComparison() {
-        let element = SBLWWElement<String>(value: "Element", timestamp: 0)
-        let identicalElement = SBLWWElement<String>(value: "Element", timestamp: 0)
-        let differentElement = SBLWWElement<String>(value: "Another Element", timestamp: 1)
+        let element = SBLWWNode<String>(value: "Element", timestamp: 0)
+        let identicalElement = SBLWWNode<String>(value: "Element", timestamp: 0)
+        let differentElement = SBLWWNode<String>(value: "Another Element", timestamp: 1)
         
         XCTAssertTrue(element === element)
         XCTAssertTrue(element === identicalElement)
@@ -23,9 +23,9 @@ final class SBLWWElementTests: XCTestCase {
     }
     
     func testComparable() {
-        let element = SBLWWElement<String>(value: "Element", timestamp: 0)
-        let recentElement = SBLWWElement<String>(value: "Element", timestamp: 1)
-        let differentElement = SBLWWElement<String>(value: "Another Element", timestamp: 1)
+        let element = SBLWWNode<String>(value: "Element", timestamp: 0)
+        let recentElement = SBLWWNode<String>(value: "Element", timestamp: 1)
+        let differentElement = SBLWWNode<String>(value: "Another Element", timestamp: 1)
         
         XCTAssertGreaterThan(recentElement, element)
         XCTAssertFalse(recentElement > differentElement)
